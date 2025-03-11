@@ -40,7 +40,7 @@ const VoiceInput = ({ onAudioSend }) => {
     formData.append("audio", audioBlob);
 
     try {
-      const response = await fetch("http://localhost:8000/chat", {
+      const response = await fetch("http://localhost:8000/voice-ai", {
         method: "POST",
         body: formData,
       });
