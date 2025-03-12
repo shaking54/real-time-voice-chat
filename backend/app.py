@@ -1,4 +1,4 @@
-from flask import Flask, request, Response, stream_with_context
+from flask import Flask, request, Response
 from flask_cors import CORS
 import json
 import requests
@@ -17,10 +17,10 @@ CORS(app)  # Enable CORS for all routes
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
 # Load models
-stt_model = whisper.load_model("base", device=device)
+stt_model = whisper.load_model("tiny")
 
 # OLLAMA API URL
-OLLAMA_API_URL = "https://bac3-35-185-247-186.ngrok-free.app/api/generate"
+OLLAMA_API_URL = "https://79f4-34-16-171-229.ngrok-free.app/api/generate"
 
 # TTS Voice Selection
 VOICE = "en-GB-SoniaNeural"
@@ -74,14 +74,6 @@ async def text_to_speech(text):
         return b""
     
     try:
-        # Make sure we have a complete sentence to avoid the NoAudioReceived error
-        if not text.endswith(('.', '!', '?', ',', ':', ';')):
-            text = text + "."
-            
-        # Ensure minimum text length
-        if len(text.strip()) < 3:
-            text = text + " Yes."
-            
         print(f"🔊 Sending to TTS: '{text}'")
         communicate = edge_tts.Communicate(text, VOICE)
         audio_data = b""
@@ -99,7 +91,6 @@ async def text_to_speech(text):
 def generate_response(text):
     """Stream LLM response and convert to speech in real-time."""
     
-    @stream_with_context
     def generate():
         loop = asyncio.new_event_loop()
         asyncio.set_event_loop(loop)
@@ -111,7 +102,7 @@ def generate_response(text):
             buffer += llm_chunk
             
             # Process complete sentences or when buffer gets large enough
-            if buffer.endswith(('.', '!', '?')) or len(buffer) > 50:
+            if buffer.endswith(('.', '!', '?', ':', '\n')):
                 try:
                     audio_data = loop.run_until_complete(text_to_speech(buffer))
                     if audio_data:
