@@ -20,7 +20,7 @@ device = "cuda" if torch.cuda.is_available() else "cpu"
 stt_model = whisper.load_model("tiny")
 
 # OLLAMA API URL
-OLLAMA_API_URL = "https://79f4-34-16-171-229.ngrok-free.app/api/generate"
+OLLAMA_API_URL = "https://d852-34-16-171-229.ngrok-free.app/api/generate"
 
 # TTS Voice Selection
 VOICE = "en-GB-SoniaNeural"
@@ -102,7 +102,7 @@ def generate_response(text):
             buffer += llm_chunk
             
             # Process complete sentences or when buffer gets large enough
-            if buffer.endswith(('.', '!', '?', ':', '\n')):
+            if buffer.endswith(('.', '!', '?', ':', '\n', ",")):
                 try:
                     audio_data = loop.run_until_complete(text_to_speech(buffer))
                     if audio_data:

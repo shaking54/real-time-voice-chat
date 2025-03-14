@@ -54,7 +54,7 @@ python app.py
 ```sh
 cd frontend
 npm install
-npm start
+npm run dev
 ```
 
 ## Usage

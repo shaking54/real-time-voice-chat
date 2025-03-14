@@ -68,7 +68,7 @@ export default function VoiceRecorder() {
       requestStartTimeRef.current = performance.now();
       console.log("Request start time:", requestStartTimeRef.current);
 
-      const response = await fetch("http://localhost:8000/voice-ai", {
+      const response = await fetch("http://localhost:8080/voice-ai", {
         method: "POST",
         body: formData,
       });

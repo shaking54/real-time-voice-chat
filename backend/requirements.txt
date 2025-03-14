@@ -3,3 +3,4 @@ openai-whisper
 requests
 realtimetts[all]
 torch
+flask_cors
