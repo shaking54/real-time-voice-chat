@@ -1,4 +1,4 @@
-from flask import Flask, request, Response
+from flask import Flask, request, Response, stream_with_context
 from flask_cors import CORS
 import json
 import requests
@@ -12,15 +12,19 @@ import os
 
 import torch
 
+import logging
+
+logging.basicConfig(level=logging.DEBUG)
+
 app = Flask(__name__)
-CORS(app)  # Enable CORS for all routes
+# CORS(app)  # Enable CORS for all routes
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
 # Load models
 stt_model = whisper.load_model("tiny")
 
 # OLLAMA API URL
-OLLAMA_API_URL = "https://d852-34-16-171-229.ngrok-free.app/api/generate"
+OLLAMA_API_URL = os.getenv("OLLAMA_API_URL")
 
 # TTS Voice Selection
 VOICE = "en-GB-SoniaNeural"
@@ -53,10 +57,10 @@ def transcribe_stream(audio_path):
 
 def stream_llm_response(prompt):
     """Stream LLM response from an external API."""
+    path = "api/generate"
     response = requests.post(
-        OLLAMA_API_URL, json={"model": "mistral", "prompt": prompt}, stream=True
+        os.path.join(OLLAMA_API_URL, path), json={"model": "mistral", "prompt": prompt}, stream=True
     )
-
     for chunk in response.iter_lines():
         if chunk:
             try:
@@ -126,11 +130,7 @@ def generate_response(text):
     # Important: Use chunked transfer encoding
     return Response(
         generate(), 
-        mimetype="audio/wav",
-        headers={
-            "Transfer-Encoding": "chunked",
-            "X-Content-Type-Options": "nosniff"
-        }
+        mimetype="audio/wav"
     )
 
 
@@ -154,10 +154,10 @@ def voice_ai():
         audio_file.save(audio_path)
 
     text = transcribe_stream(audio_path)
-    print(f"📝 Transcribed Text: {text}")
+    print(f"Transcribed Text: {text}")
 
     return generate_response(text)
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=8000)
+    app.run(host="0.0.0.0", port=8000, debug=True)

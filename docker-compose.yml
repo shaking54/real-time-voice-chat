@@ -19,8 +19,9 @@ services:
     environment:
       - FLASK_APP=app.py
       - FLASK_RUN_HOST=0.0.0.0
+      - OLLAMA_API_URL=https://f80a-35-204-136-224.ngrok-free.app
     expose:
-      - "8000:8000"
+      - "8000"
     restart: always
     networks:
       - default
@@ -32,23 +33,24 @@ services:
     environment:
       - FLASK_APP=app.py
       - FLASK_RUN_HOST=0.0.0.0
+      - OLLAMA_API_URL=https://f80a-35-204-136-224.ngrok-free.app
     expose:
-      - "8000:8000"
+      - "8000"
     restart: always
     networks:
       - default
       
-  frontend:
-    image: node:latest
-    container_name: frontend
-    working_dir: /app
-    volumes:
-      - ./frontend:/app
-    command: npm run serve
-    ports:
-      - "3000:3000"
-    networks:
-      - default
+  # frontend:
+  #   build:
+  #     context: ./frontend
+  #   container_name: frontend
+  #   working_dir: /app
+  #   ports:
+  #     - "3000:3000"
+  #   depends_on:
+  #     - nginx
+  #   networks:
+  #     - default
 
 networks:
   default:

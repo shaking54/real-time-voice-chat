@@ -12,6 +12,7 @@ RUN apt-get update && apt-get install -y \
     libffi-dev \
     portaudio19-dev \
     python3-pyaudio \
+    ffmpeg \
     && rm -rf /var/lib/apt/lists/*  # Clean up
 
 # Copy requirements file

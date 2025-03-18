@@ -8,7 +8,10 @@ backend/input.wav
 
 models/*
 
-ai-voice-recorder/.next
-ai-voice-recorder/node_modules
-ai-voice-recorder/.env
-ai-voice-recorder/package-lock.json
+frontend/.next
+frontend/node_modules
+frontend/.env
+frontend/package-lock.json
+
+input.wav
+response.wav
